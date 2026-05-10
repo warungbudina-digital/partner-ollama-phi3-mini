@@ -1,0 +1,11 @@
+models:
+  defaults:
+    model:
+      primary: "ollama-phi3-mini/phi3:mini"
+  providers:
+    ollama-phi3-mini:
+      api: "openai-completions"
+      baseUrl: "https://llm-bridge-phi3.example.com/v1"
+      apiKey: "<BRIDGE_API_KEY_SAMA_DENGAN_VPS>"
+      models:
+        "phi3:mini": {}

@@ -2,8 +2,13 @@ services:
   ollama:
     image: ollama/ollama:0.12.3
     restart: unless-stopped
+    environment:
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_MAX_LOADED_MODELS: "1"
+      OLLAMA_KEEP_ALIVE: "10m"
     volumes:
-      - ollama_data:/root/.ollama
+      - /home/aprildualapan45/partner-ollama-phi3-mini/deploy/ollama-fastapi/ollama_data:/root/.ollama
+      - /var/run/docker.sock:/var/run/docker.sock
     healthcheck:
       test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
       interval: 30s
@@ -25,19 +30,10 @@ services:
       BRIDGE_API_KEY: ${BRIDGE_API_KEY}
     ports:
       - "127.0.0.1:8000:8000"
-    healthcheck:
-      test: ["CMD-SHELL", "python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=5)" || exit 1"]
-      interval: 20s
-      timeout: 8s
-      retries: 5
-      start_period: 20s
 
   cloudflared:
     image: cloudflare/cloudflared:latest
     restart: unless-stopped
-    depends_on:
-      api:
-        condition: service_healthy
     command: >
       tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
 
